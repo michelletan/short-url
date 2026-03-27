@@ -5,10 +5,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"short-url-server/internal/auth"
-	"short-url-server/internal/links"
-	"short-url-server/internal/middleware"
-	"short-url-server/internal/redirect"
+	"short-url-backend/internal/auth"
+	"short-url-backend/internal/links"
+	"short-url-backend/internal/middleware"
+	"short-url-backend/internal/redirect"
 )
 
 func main() {
