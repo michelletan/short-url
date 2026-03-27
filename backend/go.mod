@@ -5,6 +5,8 @@ go 1.22.12
 require (
 	github.com/go-chi/chi/v5 v5.2.5
 	github.com/golang-migrate/migrate/v4 v4.18.0
+	github.com/lib/pq v1.10.9
+	golang.org/x/crypto v0.24.0
 )
 
 require (
@@ -103,7 +105,6 @@ require (
 	github.com/klauspost/compress v1.15.11 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/ktrysmt/go-bitbucket v0.6.4 // indirect
-	github.com/lib/pq v1.10.9 // indirect
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
@@ -144,7 +145,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect

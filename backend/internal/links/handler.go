@@ -3,10 +3,20 @@ package links
 import (
 	"encoding/json"
 	"net/http"
+
+	"short-url-backend/internal/service"
 )
 
+type Handler struct {
+	URLService *service.URLService
+}
+
+func NewHandler(urlService *service.URLService) *Handler {
+	return &Handler{URLService: urlService}
+}
+
 // POST /api/links
-func Create(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// TODO: parse request body
 	// TODO: call service to create short link
 
@@ -19,7 +29,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/links
-func List(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	// TODO: get user from context (set by auth middleware)
 	// TODO: fetch user's links
 
