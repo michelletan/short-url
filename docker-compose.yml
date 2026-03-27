@@ -1,11 +1,13 @@
 services:
   db:
     image: postgres:15
+    env_file:
+      - .env
     container_name: shorturl-db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}  
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USER}  
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
@@ -18,7 +20,7 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: ${DB_URL}
     ports:
       - "8080:8080"
 
