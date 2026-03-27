@@ -1,4 +1,4 @@
-Url shortener with analytics
+Frontend for URL shortener
 
 Features:
 - Landing page: form to key in url
@@ -6,9 +6,3 @@ Features:
 - Success page with shortened url
 - Dashboard page: with analytics on url submissions
 - Error page: 404
-
-Architecture:
-- Backend
-- Analytics service
-- Frontend
-- Infra
