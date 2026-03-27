@@ -59,11 +59,23 @@ cd short-url-server
 go mod tidy
 ```
 
-3. Run the server:
+3. **Copy the `.env.example` file** to a new `.env` file:
 
+```bash
+cp .env.example .env
+```
+
+4. Run the server:
+
+Locally
 ```bash
 cd cmd/server
 go run main.go
+```
+
+As a container
+```bash
+docker-compose up --build
 ```
 
 Server runs on `http://localhost:8080` by default.
