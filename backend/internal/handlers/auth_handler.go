@@ -1,45 +1,96 @@
-package auth
+package handlers
 
 import (
 	"fmt"
+	"encoding/json"
 	"net/http"
 
 	"short-url-backend/internal/service"
+	"short-url-backend/internal/models"
 )
 
-type Handler struct {
+type UserService interface {
+	Register(username, email, password string) (*models.User, error)
+	Login(email, password string) (*models.User, error)
+}
+
+type AuthHandler struct {
 	UserService *service.UserService
 }
 
-func NewHandler(userService *service.UserService) *Handler {
-	return &Handler{UserService: userService}
+func NewAuthHandler(userService *service.UserService) *AuthHandler {
+	return &AuthHandler{UserService: userService}
 }
 
 // POST /auth/register
-func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
-	// TODO: parse request body for username, email, password
-	// For demo, we'll hardcode a user
-	user, err := h.UserService.Register("alice", "alice@example.com", "password123")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Fprintf(w, "Registered user ID: %d\n", user.ID)
+func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+        Username string `json:"username"`
+        Email    string `json:"email"`
+        Password string `json:"password"`
+    }
+
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "Invalid request payload", http.StatusBadRequest)
+        return
+    }
+
+    user, err := h.UserService.Register(req.Username, req.Email, req.Password)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(struct {
+        ID       int    `json:"id"`
+        Username string `json:"username"`
+        Email    string `json:"email"`
+    }{
+        ID:       user.ID,
+        Username: user.Username,
+        Email:    user.Email,
+    })
 }
 
 // POST /auth/login
-func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	// TODO: parse login request
-	// Example placeholder: just say login successful
-	fmt.Fprintf(w, "Login endpoint (call UserService here)\n")
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+        Email    string `json:"email"`
+        Password string `json:"password"`
+    }
+
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "Invalid request payload", http.StatusBadRequest)
+        return
+    }
+
+	user, err := h.UserService.Login(req.Email, req.Password)
+
+	if err != nil {
+        http.Error(w, err.Error(), http.StatusUnauthorized)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(struct {
+        ID       int    `json:"id"`
+        Username string `json:"username"`
+        Email    string `json:"email"`
+    }{
+        ID:       user.ID,
+        Username: user.Username,
+        Email:    user.Email,
+    })
+
 }
 
 // POST /auth/logout
-func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Logout endpoint\n")
 }
 
 // GET /auth/me
-func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Me endpoint (return logged-in user info)\n")
 }

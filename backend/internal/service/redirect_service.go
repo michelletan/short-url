@@ -13,7 +13,7 @@ func NewRedirectService(store *store.RedirectStore) *RedirectService {
     return &RedirectService{store: store}
 }
 
-func (s *RedirectService) TrackRedirect(urlID int, userIP, userAgent, referrer string) (*models.Redirect, error) {
+func (s *RedirectService) TrackRedirect(urlID int, userIP, userAgent, referrer string) (error) {
     r := &models.Redirect{
         URLID:     urlID,
         UserIP:    userIP,
@@ -21,7 +21,7 @@ func (s *RedirectService) TrackRedirect(urlID int, userIP, userAgent, referrer s
         Referrer:  referrer,
     }
     if err := s.store.Create(r); err != nil {
-        return nil, err
+        return err
     }
-    return r, nil
+    return nil
 }

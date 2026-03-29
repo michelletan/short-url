@@ -1,4 +1,4 @@
-package redirect
+package handlers
 
 import (
 	"net/http"
@@ -8,16 +8,21 @@ import (
 	"short-url-backend/internal/service"
 )
 
-type Handler struct {
+type RedirectService interface {
+    GetOriginalURL(slug string) (string, error)
+	TrackRedirect(urlID int, userIP, userAgent, referrer string) (error)
+}
+
+type RedirectHandler struct {
 	RedirectService *service.RedirectService
 }
 
-func NewHandler(redirectService *service.RedirectService) *Handler {
-	return &Handler{RedirectService: redirectService}
+func NewRedirectHandler(redirectService *service.RedirectService) *RedirectHandler {
+	return &RedirectHandler{RedirectService: redirectService}
 }
 
 // GET /{slug}
-func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
+func (h *RedirectHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
 
 	// TODO: look up slug in database

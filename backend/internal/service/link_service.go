@@ -1,32 +1,33 @@
 package service
 
 import (
-    "short-url-backend/internal/models"
-    "short-url-backend/internal/store"
     "math/rand"
     "time"
+
+    "short-url-backend/internal/models"
+    "short-url-backend/internal/store"
 )
 
-type URLService struct {
-    store *store.URLStore
+type LinkService struct {
+    store *store.LinkStore
 }
 
-func NewURLService(store *store.URLStore) *URLService {
-    return &URLService{store: store}
+func NewLinkService(store *store.LinkStore) *LinkService {
+    return &LinkService{store: store}
 }
 
-// CreateShortURL generates a unique short code and saves the URL
-func (s *URLService) CreateShortURL(userID int, longURL string) (*models.URL, error) {
+// CreateShortLink generates a unique short code and saves the URL
+func (s *LinkService) CreateShortLink(userID int, longURL string) (*models.Link, error) {
     code := generateShortCode(6)
-    url := &models.URL{
+    link := &models.Link{
         UserID:    userID,
         LongURL:   longURL,
         ShortCode: code,
     }
-    if err := s.store.Create(url); err != nil {
+    if err := s.store.Create(link); err != nil {
         return nil, err
     }
-    return url, nil
+    return link, nil
 }
 
 // Generates a random alphanumeric short code

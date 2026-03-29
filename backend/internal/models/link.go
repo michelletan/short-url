@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type URL struct {
+type Link struct {
     ID        int
     UserID    int
     LongURL   string

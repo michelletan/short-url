@@ -1,4 +1,4 @@
-package links
+package handlers
 
 import (
 	"encoding/json"
@@ -7,16 +7,20 @@ import (
 	"short-url-backend/internal/service"
 )
 
-type Handler struct {
-	URLService *service.URLService
+type LinkService interface {
+	CreateShortLink(userID int, originalURL string) (string, error)
 }
 
-func NewHandler(urlService *service.URLService) *Handler {
-	return &Handler{URLService: urlService}
+type LinkHandler struct {
+	LinkService *service.LinkService
+}
+
+func NewLinkHandler(linkService *service.LinkService) *LinkHandler {
+	return &LinkHandler{LinkService: linkService}
 }
 
 // POST /api/links
-func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
+func (h *LinkHandler) Create(w http.ResponseWriter, r *http.Request) {
 	// TODO: parse request body
 	// TODO: call service to create short link
 
@@ -29,7 +33,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/links
-func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+func (h *LinkHandler) List(w http.ResponseWriter, r *http.Request) {
 	// TODO: get user from context (set by auth middleware)
 	// TODO: fetch user's links
 

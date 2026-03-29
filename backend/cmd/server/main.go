@@ -7,13 +7,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 
-	"short-url-backend/internal/auth"
-	"short-url-backend/internal/links"
 	authMiddleware "short-url-backend/internal/middleware"
-	"short-url-backend/internal/redirect"
 	"short-url-backend/internal/service"
 	"short-url-backend/internal/store"
 	"short-url-backend/internal/db"
+	"short-url-backend/internal/handlers"
 )
 
 func main() {
@@ -27,18 +25,18 @@ func main() {
 
     // Initialize stores
     userStore := store.NewUserStore(database)
-    urlStore := store.NewURLStore(database)
+    linkStore := store.NewLinkStore(database)
     redirectStore := store.NewRedirectStore(database)
 
     // Initialize services
     userService := service.NewUserService(userStore)
-    urlService := service.NewURLService(urlStore)
+    linkService := service.NewLinkService(linkStore)
     redirectService := service.NewRedirectService(redirectStore)
 
 	// Initialize handlers
-	authHandler := auth.NewHandler(userService)
-	linksHandler := links.NewHandler(urlService)
-	redirectHandler := redirect.NewHandler(redirectService)
+	authHandler := handlers.NewAuthHandler(userService)
+	linksHandler := handlers.NewLinkHandler(linkService)
+	redirectHandler := handlers.NewRedirectHandler(redirectService)
 
 	r := chi.NewRouter()
 
