@@ -80,5 +80,13 @@ func (s *UserService) Login(email, password string) (dtos.LoginResponse, error) 
 }
 
 func (s *UserService) GetByID(id int) (*models.User, error) {
-    return s.store.GetByID(id)
+    user, err := s.store.GetByID(id)
+    if err != nil {
+        if errors.Is(err, store.ErrUserNotFound) {
+            log.Printf("User not found with ID %d: %v", id, err)
+            return nil, ErrUserNotFound
+        }
+        return nil, ErrInternalServer
+    }
+    return user, nil
 }

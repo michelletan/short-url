@@ -77,11 +77,20 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// GET /auth/me
+// GET /api/me
 func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value("userID").(int)
+	ctxUserID := r.Context().Value("userID")
+    userID, ok := ctxUserID.(int)
+    if !ok {
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
     user, err := h.UserService.GetByID(userID)
     if err != nil {
+		if errors.Is(err, service.ErrUserNotFound) {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
         http.Error(w, "Internal server error", http.StatusInternalServerError)
         return
     }
