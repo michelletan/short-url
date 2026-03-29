@@ -53,11 +53,14 @@ func main() {
 		r.Post("/register", authHandler.Register)
 		r.Post("/login", authHandler.Login)
 		r.Post("/logout", authHandler.Logout)
-		r.Get("/me", authHandler.Me)
 	})
 
 	r.Route("/api", func(r chi.Router) {
 		r.Use(middleware.AuthMiddleware(jwtService))
+
+		r.Route("/me", func(r chi.Router) {
+			r.Get("/", authHandler.Me)
+		})
 
 		r.Route("/links", func(r chi.Router) {
 			r.Post("/", linksHandler.Create)

@@ -1,6 +1,6 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,               -- Unique user ID
-    username VARCHAR(255) UNIQUE NOT NULL, -- User's chosen username
+    username VARCHAR(255) NOT NULL,      -- User's chosen username
     email VARCHAR(255) UNIQUE NOT NULL,   -- User's email address
     password_hash VARCHAR(255) NOT NULL,  -- Hashed password
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- When the user account was created

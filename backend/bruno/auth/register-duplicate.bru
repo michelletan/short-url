@@ -7,20 +7,26 @@ meta {
 post {
   url: {{baseUrl}}/auth/register
   body: json
+  auth: none
 }
 
 headers {
   Content-Type: application/json
 }
 
-body {
+body:json {
   {
-    "email": "test@example.com",
+    "email": "{{email}}",
     "password": "password123"
   }
 }
 
 tests {
-  status: 400
-  body.error: exists
+  test("should return 400 Bad Request", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should return failure message", function () {
+    expect(res.getBody()).to.equal("Failed to register");
+  });
 }

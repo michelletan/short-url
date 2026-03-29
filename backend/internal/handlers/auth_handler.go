@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"fmt"
+	"errors"
 	"encoding/json"
 	"net/http"
 
+	"short-url-backend/internal/service"
 	"short-url-backend/internal/models"
 	"short-url-backend/internal/dtos"
 )
@@ -34,6 +36,10 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
     user, err := h.UserService.Register(req.Username, req.Email, req.Password)
     if err != nil {
+		if errors.Is(err, service.ErrDuplicateEmail) {
+			http.Error(w, "Failed to register", http.StatusBadRequest)
+			return
+		}
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }

@@ -70,7 +70,7 @@ Server runs on `http://localhost:8080` by default.
 | POST   | /auth/register | Register a new user        |
 | POST   | /auth/login    | Login with email/password  |
 | POST   | /auth/logout   | Logout user                |
-| GET    | /me            | Get current logged-in user |
+| GET    | /api/me        | Get current logged-in user |
 
 ### Links
 

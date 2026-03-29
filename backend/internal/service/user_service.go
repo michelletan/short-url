@@ -2,12 +2,13 @@ package service
 
 import (
     "log"
+    "errors"
 
     "golang.org/x/crypto/bcrypt"
 
     "short-url-backend/internal/models"
     "short-url-backend/internal/dtos"
-    "short-url-backend/internal/errors"
+    "short-url-backend/internal/store"
 )
 
 type UserStore interface {
@@ -29,7 +30,7 @@ func (s *UserService) Register(username, email, password string) (*models.User, 
     hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
     if err != nil {
         log.Printf("Error hashing password for user %s: %v", email, err)
-        return nil, errors.ErrInternalServer
+        return nil, ErrInternalServer
     }
 
     user := &models.User{
@@ -39,8 +40,12 @@ func (s *UserService) Register(username, email, password string) (*models.User, 
     }
 
     if err := s.store.Create(user); err != nil {
+        if errors.Is(err, store.ErrDuplicateEmail) {
+            log.Printf("Duplicate email registration attempt for %s", email)
+            return nil, ErrDuplicateEmail
+        }
         log.Printf("Error creating user %s: %v", email, err)
-        return nil, errors.ErrInternalServer
+        return nil, ErrInternalServer
     }
 
     return user, nil
@@ -49,19 +54,23 @@ func (s *UserService) Register(username, email, password string) (*models.User, 
 func (s *UserService) Login(email, password string) (dtos.LoginResponse, error) {
     user, err := s.store.GetByEmail(email)
     if err != nil {
-        log.Printf("Error fetching user by email: %v", err)
-        return dtos.LoginResponse{}, errors.ErrInvalidLogin
+        if errors.Is(err, store.ErrUserNotFound) {
+            log.Printf("No such user: %v", err)
+            return dtos.LoginResponse{}, ErrInvalidLogin
+        }
+        log.Printf("Error fetching user %s: %v", email, err)
+        return dtos.LoginResponse{}, ErrInvalidLogin
     }
 
     if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
         log.Printf("Password mismatch for user %s: %v", email, err)
-        return dtos.LoginResponse{}, errors.ErrInvalidLogin
+        return dtos.LoginResponse{}, ErrInvalidLogin
     }
 
     access, err := s.jwtService.GenerateAccessToken(user.ID)
     if err != nil {
         log.Printf("Error generating access token for user %s: %v", email, err)
-        return dtos.LoginResponse{}, errors.ErrInternalServer
+        return dtos.LoginResponse{}, ErrInternalServer
     }
 
     return dtos.LoginResponse{

@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"context"
 	"net/http"
 	"strings"
@@ -31,9 +30,7 @@ func AuthMiddleware(jwtService JWTService) func(http.Handler) http.Handler {
 
             claims := token.Claims.(jwt.MapClaims)
             userID := int(claims["user_id"].(float64)) // jwt parses numbers as float64
-			log.Printf("Authenticated user ID: %d", userID)
             ctx := context.WithValue(r.Context(), "userID", userID)
-			log.Printf("ctx: %v", ctx.Value("userID"))
             next.ServeHTTP(w, r.WithContext(ctx))
         })
     }

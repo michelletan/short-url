@@ -7,15 +7,16 @@ meta {
 post {
   url: {{baseUrl}}/auth/login
   body: json
+  auth: none
 }
 
 headers {
   Content-Type: application/json
 }
 
-body {
+body:json {
   {
-    "email": "wrong@example.com",
+    "email": "{{email}}",
     "password": "wrongpassword"
   }
 }
