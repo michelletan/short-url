@@ -15,7 +15,7 @@ func NewLinkStore(db *sql.DB) *LinkStore {
 
 func (s *LinkStore) Create(link *models.Link) error {
     query := `
-        INSERT INTO urls (user_id, long_url, short_code)
+        INSERT INTO links (user_id, long_url, short_code)
         VALUES ($1, $2, $3)
         RETURNING id, created_at, updated_at
     `
@@ -27,7 +27,7 @@ func (s *LinkStore) GetByShortCode(code string) (*models.Link, error) {
     link := &models.Link{}
     query := `
         SELECT id, user_id, long_url, short_code, created_at, updated_at
-        FROM urls
+        FROM links
         WHERE short_code = $1
     `
     row := s.db.QueryRow(query, code)

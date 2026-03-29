@@ -1,0 +1,14 @@
+meta {
+  name: Redirect Not Found
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/nonexistentslug123
+}
+
+tests {
+  status: 404
+  body.error: exists
+}

@@ -7,7 +7,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 
-	authMiddleware "short-url-backend/internal/middleware"
+	"short-url-backend/internal/config"
+	middleware "short-url-backend/internal/middleware"
 	"short-url-backend/internal/service"
 	"short-url-backend/internal/store"
 	"short-url-backend/internal/db"
@@ -15,9 +16,14 @@ import (
 )
 
 func main() {
-	database, err := db.Connect()
+	cfg, err := config.Load()
+	if err != nil {
+        log.Fatalf("Failed to load config: %v", err)
+    }
+
+	database, err := db.Connect(cfg.DBURL)
     if err != nil {
-        log.Fatalf("failed to connect to DB: %v", err)
+        log.Fatalf("Failed to connect to DB: %v", err)
     }
     defer database.Close()
 
@@ -29,9 +35,10 @@ func main() {
     redirectStore := store.NewRedirectStore(database)
 
     // Initialize services
-    userService := service.NewUserService(userStore)
     linkService := service.NewLinkService(linkStore)
     redirectService := service.NewRedirectService(redirectStore)
+    jwtService := service.NewJWTService(cfg.JWTSecret, cfg.JWTTTL)
+	userService := service.NewUserService(userStore, jwtService)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(userService)
@@ -50,7 +57,7 @@ func main() {
 	})
 
 	r.Route("/api", func(r chi.Router) {
-		r.Use(authMiddleware.Auth)
+		r.Use(middleware.AuthMiddleware(jwtService))
 
 		r.Route("/links", func(r chi.Router) {
 			r.Post("/", linksHandler.Create)

@@ -1,0 +1,25 @@
+meta {
+  name: Login Invalid Credentials
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body {
+  {
+    "email": "wrong@example.com",
+    "password": "wrongpassword"
+  }
+}
+
+tests {
+  status: 401
+}

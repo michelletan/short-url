@@ -1,0 +1,18 @@
+meta {
+  name: List Links
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/links
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  status: 200
+  body: isArray
+}

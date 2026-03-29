@@ -5,30 +5,27 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"short-url-backend/internal/service"
 	"short-url-backend/internal/models"
+	"short-url-backend/internal/dtos"
 )
 
 type UserService interface {
 	Register(username, email, password string) (*models.User, error)
-	Login(email, password string) (*models.User, error)
+	Login(email, password string) (dtos.LoginResponse, error)
+	GetByID(id int) (*models.User, error)
 }
 
 type AuthHandler struct {
-	UserService *service.UserService
+	UserService UserService
 }
 
-func NewAuthHandler(userService *service.UserService) *AuthHandler {
+func NewAuthHandler(userService UserService) *AuthHandler {
 	return &AuthHandler{UserService: userService}
 }
 
 // POST /auth/register
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-        Username string `json:"username"`
-        Email    string `json:"email"`
-        Password string `json:"password"`
-    }
+	var req dtos.RegisterRequest
 
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
         http.Error(w, "Invalid request payload", http.StatusBadRequest)
@@ -41,31 +38,24 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+	res := dtos.RegisterResponse{
+		Message: fmt.Sprintf("User %s registered successfully", user.Username),
+	}
+
     w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(struct {
-        ID       int    `json:"id"`
-        Username string `json:"username"`
-        Email    string `json:"email"`
-    }{
-        ID:       user.ID,
-        Username: user.Username,
-        Email:    user.Email,
-    })
+    json.NewEncoder(w).Encode(res)
 }
 
 // POST /auth/login
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-        Email    string `json:"email"`
-        Password string `json:"password"`
-    }
+	var req dtos.LoginRequest
 
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
         http.Error(w, "Invalid request payload", http.StatusBadRequest)
         return
     }
 
-	user, err := h.UserService.Login(req.Email, req.Password)
+	tokens, err := h.UserService.Login(req.Email, req.Password)
 
 	if err != nil {
         http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -73,24 +63,28 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
     }
 
     w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(struct {
-        ID       int    `json:"id"`
-        Username string `json:"username"`
-        Email    string `json:"email"`
-    }{
-        ID:       user.ID,
-        Username: user.Username,
-        Email:    user.Email,
-    })
-
+    json.NewEncoder(w).Encode(tokens)
 }
 
 // POST /auth/logout
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Logout endpoint\n")
+	w.WriteHeader(http.StatusOK)
 }
 
 // GET /auth/me
 func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Me endpoint (return logged-in user info)\n")
+	userID := r.Context().Value("userID").(int)
+    user, err := h.UserService.GetByID(userID)
+    if err != nil {
+        http.Error(w, "Internal server error", http.StatusInternalServerError)
+        return
+    }
+
+	var res = dtos.MeResponse{
+		Email:    user.Email,
+		Username: user.Username,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(res)
 }

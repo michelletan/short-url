@@ -1,13 +1,40 @@
 package middleware
 
 import (
+	"log"
+	"context"
 	"net/http"
+	"strings"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
-func Auth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO: check JWT/cookie
+type JWTService interface {
+	ValidateToken(tokenStr string) (*jwt.Token, error)
+}
 
-		next.ServeHTTP(w, r)
-	})
+func AuthMiddleware(jwtService JWTService) func(http.Handler) http.Handler {
+    return func(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            authHeader := r.Header.Get("Authorization")
+            if !strings.HasPrefix(authHeader, "Bearer ") {
+                http.Error(w, "unauthorized", http.StatusUnauthorized)
+                return
+            }
+
+            tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+            token, err := jwtService.ValidateToken(tokenStr)
+            if err != nil || !token.Valid {
+                http.Error(w, "unauthorized", http.StatusUnauthorized)
+                return
+            }
+
+            claims := token.Claims.(jwt.MapClaims)
+            userID := int(claims["user_id"].(float64)) // jwt parses numbers as float64
+			log.Printf("Authenticated user ID: %d", userID)
+            ctx := context.WithValue(r.Context(), "userID", userID)
+			log.Printf("ctx: %v", ctx.Value("userID"))
+            next.ServeHTTP(w, r.WithContext(ctx))
+        })
+    }
 }

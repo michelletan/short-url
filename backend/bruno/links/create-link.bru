@@ -1,0 +1,36 @@
+meta {
+  name: Create Link
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/links
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body {
+  {
+    "url": "https://google.com"
+  }
+}
+
+script:post-response {
+  const res = bru.getResponseJson();
+
+  if (res.slug) {
+    bru.setEnvVar("slug", res.slug);
+  }
+}
+
+tests {
+  status: 200
+  body.id: exists
+  body.slug: exists
+  body.url: exists
+}

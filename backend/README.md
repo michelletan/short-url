@@ -11,33 +11,6 @@ Supports user authentication and link management.
 - Redirect short URLs (`GET /{slug}`)
 - Modular Go project structure
 
-## Project Structure
-
-```
-short-url-server/
-├── cmd/
-│   └── server/
-│       └── main.go         # entry point
-├── internal/
-│   ├── auth/
-│   │   ├── handler.go       # auth endpoints
-│   │   ├── service.go       # business logic
-│   │   ├── repository.go    # DB queries
-│   │   └── model.go         # user model
-│   ├── links/
-│   │   └── handler.go       # create/list links
-│   ├── redirect/
-│   │   ├── handler.go       # handle redirect
-│   │   └── service.go       # redirect logic
-│   ├── middleware/
-│   │   └── auth.go          # JWT authentication middleware
-│   └── store/
-│       └── user_store.go    # user DB access
-├── go.mod
-├── go.sum
-└── README.md
-````
-
 ## Requirements
 
 - Go 1.22+
@@ -54,6 +27,10 @@ cd short-url-server
 ````
 
 2. Install dependencies:
+```bash
+make install-tools
+```
+or
 
 ```bash
 go mod tidy
@@ -68,6 +45,10 @@ cp .env.example .env
 4. Run the server:
 
 Locally
+```bash
+make run
+```
+or
 ```bash
 cd cmd/server
 go run main.go

@@ -1,0 +1,14 @@
+meta {
+  name: Redirect
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/{{slug}}
+}
+
+tests {
+  status: 302
+  header.Location: exists
+}
