@@ -16,7 +16,7 @@ CREATE TABLE links (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- When the shortened URL details were updated
 );
 
-CREATE TABLE redirects (
+CREATE TABLE redirect_events (
     id SERIAL PRIMARY KEY,               -- Unique redirect entry ID
     url_id INTEGER REFERENCES links(id),  -- Foreign key to the links table
     user_ip VARCHAR(45),                 -- IP address of the user who clicked the short URL

@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type Redirect struct {
+type RedirectEvent struct {
     ID        int
     URLID     int
     UserIP    string

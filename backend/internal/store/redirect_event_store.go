@@ -5,17 +5,17 @@ import (
     "short-url-backend/internal/models"
 )
 
-type RedirectStore struct {
+type RedirectEventStore struct {
     db *sql.DB
 }
 
-func NewRedirectStore(db *sql.DB) *RedirectStore {
-	return &RedirectStore{db: db}
+func NewRedirectEventStore(db *sql.DB) *RedirectEventStore {
+	return &RedirectEventStore{db: db}
 }
 
-func (s *RedirectStore) Create(r *models.Redirect) error {
+func (s *RedirectEventStore) Create(r *models.RedirectEvent) error {
     query := `
-        INSERT INTO redirects (url_id, user_ip, user_agent, referrer)
+        INSERT INTO redirect_events (url_id, user_ip, user_agent, referrer)
         VALUES ($1, $2, $3, $4)
         RETURNING id, created_at
     `

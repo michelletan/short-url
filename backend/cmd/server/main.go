@@ -32,11 +32,11 @@ func main() {
     // Initialize stores
     userStore := store.NewUserStore(database)
     linkStore := store.NewLinkStore(database)
-    redirectStore := store.NewRedirectStore(database)
+    redirectEventStore := store.NewRedirectEventStore(database)
 
     // Initialize services
     linkService := service.NewLinkService(linkStore)
-    redirectService := service.NewRedirectService(redirectStore)
+    redirectService := service.NewRedirectService(linkStore, redirectEventStore)
     jwtService := service.NewJWTService(cfg.JWTSecret, cfg.JWTTTL)
 	userService := service.NewUserService(userStore, jwtService)
 

@@ -5,10 +5,17 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/{{slug}}
+  url: {{redirectUrl}}
+  body: none
+  auth: none
 }
 
 tests {
-  status: 302
-  header.Location: exists
+  test("should return 302 Redirect", function () {
+    expect(res.getStatus()).to.equal(302);
+  });
+  
+  test("should contain header location", function () {
+    expect(res.header).to.have.property("location");
+  });
 }

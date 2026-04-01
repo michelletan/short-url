@@ -22,8 +22,8 @@ body:json {
 }
 
 script:post-response {
-  if (res.body.slug) {
-    bru.setEnvVar("slug", res.body.slug);
+  if (res.body.url) {
+    bru.setEnvVar("redirectUrl", res.body.url);
   }
 }
 
