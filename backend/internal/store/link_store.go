@@ -6,11 +6,11 @@ import (
 )
 
 type LinkStore struct {
-    db *sql.DB
+    DB *sql.DB
 }
 
 func NewLinkStore(db *sql.DB) *LinkStore {
-	return &LinkStore{db: db}
+	return &LinkStore{DB: db}
 }
 
 func (s *LinkStore) Create(link *models.Link) error {
@@ -19,23 +19,43 @@ func (s *LinkStore) Create(link *models.Link) error {
         VALUES ($1, $2, $3)
         RETURNING id, created_at, updated_at
     `
-    return s.db.QueryRow(query, link.UserID, link.LongURL, link.ShortCode).
+    return s.DB.QueryRow(query, link.UserID, link.LongURL, link.ShortCode).
         Scan(&link.ID, &link.CreatedAt, &link.UpdatedAt)
 }
 
-func (s *LinkStore) GetByShortCode(code string) (*models.Link, error) {
-    link := &models.Link{}
+func (s *LinkStore) GetByUserId(userID int) ([]models.Link, error) {
     query := `
         SELECT id, user_id, long_url, short_code, created_at, updated_at
         FROM links
-        WHERE short_code = $1
+        WHERE user_id = $1
+        ORDER BY created_at DESC
     `
-    row := s.db.QueryRow(query, code)
-    if err := row.Scan(&link.ID, &link.UserID, &link.LongURL, &link.ShortCode, &link.CreatedAt, &link.UpdatedAt); err != nil {
-        if err == sql.ErrNoRows {
-            return nil, nil
-        }
+
+    rows, err := s.DB.Query(query, userID)
+    if err != nil {
         return nil, err
     }
-    return link, nil
+    defer rows.Close()
+
+    var links []models.Link
+    for rows.Next() {
+        var l models.Link
+        if err := rows.Scan(
+            &l.ID,
+            &l.UserID,
+            &l.LongURL,
+            &l.ShortCode,
+            &l.CreatedAt,
+            &l.UpdatedAt,
+        ); err != nil {
+            return nil, err
+        }
+        links = append(links, l)
+    }
+
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return links, nil
 }

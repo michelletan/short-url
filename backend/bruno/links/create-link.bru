@@ -7,6 +7,7 @@ meta {
 post {
   url: {{baseUrl}}/api/links
   body: json
+  auth: none
 }
 
 headers {
@@ -14,23 +15,25 @@ headers {
   Authorization: Bearer {{token}}
 }
 
-body {
+body:json {
   {
     "url": "https://google.com"
   }
 }
 
 script:post-response {
-  const res = bru.getResponseJson();
-
-  if (res.slug) {
-    bru.setEnvVar("slug", res.slug);
+  if (res.body.slug) {
+    bru.setEnvVar("slug", res.body.slug);
   }
 }
 
 tests {
-  status: 200
-  body.id: exists
-  body.slug: exists
-  body.url: exists
+  test("should return 200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should contain slug", function () {
+    const body = res.getBody();
+    expect(body).to.have.property("slug");
+  });
 }

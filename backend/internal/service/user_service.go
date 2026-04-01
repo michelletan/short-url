@@ -9,6 +9,7 @@ import (
     "short-url-backend/internal/models"
     "short-url-backend/internal/dtos"
     "short-url-backend/internal/store"
+    "short-url-backend/internal/validation"
 )
 
 type UserStore interface {
@@ -27,6 +28,12 @@ func NewUserService(store UserStore, jwtService *JWTService) *UserService {
 }
 
 func (s *UserService) Register(username, email, password string) (*models.User, error) {
+    err := validation.ValidateUser(username, email, password)
+    if err != nil {
+        log.Printf("User form failed validation %s: %v", email, err)
+        return nil, ErrInvalidUserForm
+    }
+
     hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
     if err != nil {
         log.Printf("Error hashing password for user %s: %v", email, err)

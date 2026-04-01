@@ -10,6 +10,7 @@ type Config struct {
 	DBURL    string
     JWTSecret string
     JWTTTL    time.Duration
+    RedirectBaseURL string
 }
 
 func Load() (*Config, error) {
@@ -19,9 +20,12 @@ func Load() (*Config, error) {
         return nil, err
     }
 
+    baseUrl := os.Getenv("REDIRECT_BASE_URL")
+
     return &Config{
 		DBURL:    os.Getenv("DB_URL"),
         JWTSecret: os.Getenv("JWT_SECRET"),
         JWTTTL:    time.Duration(ttlSeconds) * time.Second,
+        RedirectBaseURL: baseUrl,
     }, nil
 }

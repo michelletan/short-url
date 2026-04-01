@@ -42,7 +42,7 @@ func main() {
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(userService)
-	linksHandler := handlers.NewLinkHandler(linkService)
+	linksHandler := handlers.NewLinkHandler(linkService, cfg.RedirectBaseURL)
 	redirectHandler := handlers.NewRedirectHandler(redirectService)
 
 	r := chi.NewRouter()

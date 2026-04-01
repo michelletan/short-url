@@ -36,6 +36,11 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
     user, err := h.UserService.Register(req.Username, req.Email, req.Password)
     if err != nil {
+		if errors.Is(err, service.ErrInvalidUserForm) {
+			http.Error(w, "One or more params are invalid", http.StatusBadRequest)
+			return
+		}
+		
 		if errors.Is(err, service.ErrDuplicateEmail) {
 			http.Error(w, "Failed to register", http.StatusBadRequest)
 			return
@@ -62,9 +67,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
     }
 
 	tokens, err := h.UserService.Login(req.Email, req.Password)
-
 	if err != nil {
-        http.Error(w, err.Error(), http.StatusUnauthorized)
+		if errors.Is(err, service.ErrInvalidLogin) || errors.Is(err, service.ErrUserNotFound) {
+			http.Error(w, "Invalid email or password", http.StatusBadRequest)
+        	return
+		}
+
+        http.Error(w, "Something went wrong, please try again.", http.StatusInternalServerError)
         return
     }
 
