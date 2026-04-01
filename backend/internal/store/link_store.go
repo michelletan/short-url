@@ -5,15 +5,23 @@ import (
     "short-url-backend/internal/models"
 )
 
-type LinkStore struct {
+
+type LinkStore interface {
+    Create(link *models.Link) error
+    GetByUserId(userID int) ([]models.Link, error)
+    GetByShortCode(shortCode string) (*models.Link, error)
+    ExistsByShortCode(shortCode string) (bool, error)
+}
+
+type LinkStoreImpl struct {
     DB *sql.DB
 }
 
-func NewLinkStore(db *sql.DB) *LinkStore {
-	return &LinkStore{DB: db}
+func NewLinkStore(db *sql.DB) *LinkStoreImpl {
+	return &LinkStoreImpl{DB: db}
 }
 
-func (s *LinkStore) Create(link *models.Link) error {
+func (s *LinkStoreImpl) Create(link *models.Link) error {
     query := `
         INSERT INTO links (user_id, long_url, short_code)
         VALUES ($1, $2, $3)
@@ -23,7 +31,7 @@ func (s *LinkStore) Create(link *models.Link) error {
         Scan(&link.ID, &link.CreatedAt, &link.UpdatedAt)
 }
 
-func (s *LinkStore) GetByUserId(userID int) ([]models.Link, error) {
+func (s *LinkStoreImpl) GetByUserId(userID int) ([]models.Link, error) {
     query := `
         SELECT id, user_id, long_url, short_code, created_at, updated_at
         FROM links
@@ -58,4 +66,36 @@ func (s *LinkStore) GetByUserId(userID int) ([]models.Link, error) {
     }
 
     return links, nil
+}
+
+func (s *LinkStoreImpl) GetByShortCode(shortCode string) (*models.Link, error) {
+    query := `
+        SELECT id, user_id, long_url, short_code, created_at, updated_at
+        FROM links
+        WHERE short_code = $1
+    `
+
+    var l models.Link
+    err := s.DB.QueryRow(query, shortCode).Scan(
+        &l.ID,
+        &l.UserID,
+        &l.LongURL,
+        &l.ShortCode,
+        &l.CreatedAt,
+        &l.UpdatedAt,
+    )
+    if err != nil {
+        return nil, err
+    }
+    return &l, nil
+}
+
+func (s *LinkStoreImpl) ExistsByShortCode(shortCode string) (bool, error) {
+    query := `SELECT COUNT(1) FROM links WHERE short_code = $1`
+    var count int
+    err := s.DB.QueryRow(query, shortCode).Scan(&count)
+    if err != nil {
+        return false, err
+    }
+    return count > 0, nil
 }

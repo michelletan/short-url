@@ -6,10 +6,11 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"short-url-backend/internal/service"
+	"short-url-backend/internal/models"
 )
 
 type RedirectService interface {
-    GetOriginalURL(slug string) (string, error)
+    GetLinkByShortCode(slug string) (*models.Link, error)
 	TrackRedirect(urlID int, userIP, userAgent, referrer string) (error)
 }
 
@@ -25,11 +26,13 @@ func NewRedirectHandler(redirectService *service.RedirectService) *RedirectHandl
 func (h *RedirectHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
 
-	// TODO: look up slug in database
-	// TODO: get original URL
+	link, err := h.RedirectService.GetLinkByShortCode(slug)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
 
-	// Temporary placeholder
-	originalURL := "https://example.com/" + slug
+	h.RedirectService.TrackRedirect(link.ID, r.RemoteAddr, r.UserAgent(), r.Referer())
 
-	http.Redirect(w, r, originalURL, http.StatusFound)
+	http.Redirect(w, r, link.LongURL, http.StatusFound)
 }
