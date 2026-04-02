@@ -1,3 +1,3 @@
-DROP TABLE IF EXISTS redirects;
+DROP TABLE IF EXISTS redirect_events;
 DROP TABLE IF EXISTS links;
 DROP TABLE IF EXISTS users;

@@ -73,7 +73,7 @@ Server runs on `http://localhost:8080` by default.
 | GET    | /api/me        | Get current logged-in user |
 
 ### Links
-
+Requires authentication
 | Method | Path       | Description            |
 | ------ | ---------- | ---------------------- |
 | POST   | /api/links | Create a new short URL |

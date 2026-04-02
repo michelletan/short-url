@@ -1,11 +1,13 @@
 meta {
-  name: List Links
+  name: Get Links
   type: http
   seq: 2
 }
 
 get {
   url: {{baseUrl}}/api/links
+  body: none
+  auth: none
 }
 
 headers {
@@ -13,6 +15,24 @@ headers {
 }
 
 tests {
-  status: 200
-  body: isArray
+  test("should return 200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("should return links array", function () {
+    const body = res.getBody();
+    expect(body).to.have.property("links");
+    expect(body.links).to.be.an("array");
+  });
+
+  test("each link should have required fields", function () {
+    const body = res.getBody();
+    body.links.forEach(function (link) {
+      expect(link).to.have.property("id");
+      expect(link).to.have.property("url");
+      expect(link).to.have.property("slug");
+      expect(link).to.have.property("created_at");
+      expect(link).to.have.property("click_count");
+    });
+  });
 }

@@ -22,18 +22,28 @@ body:json {
 }
 
 script:post-response {
-  if (res.body.url) {
-    bru.setEnvVar("redirectUrl", res.body.url);
+  if (res.body.link && res.body.link.url) {
+    bru.setEnvVar("shortUrl", res.body.link.url);
   }
 }
 
 tests {
-  test("should return 200 OK", function () {
-    expect(res.getStatus()).to.equal(200);
+  test("should return 201 Created", function () {
+    expect(res.getStatus()).to.equal(201);
   });
-  
-  test("should contain slug", function () {
+
+  test("should return link object", function () {
     const body = res.getBody();
-    expect(body).to.have.property("slug");
+    expect(body).to.have.property("link");
+    expect(body.link).to.be.an("object");
+  });
+
+  test("link should have required fields", function () {
+    const link = res.getBody().link;
+    expect(link).to.have.property("id");
+    expect(link).to.have.property("url");
+    expect(link).to.have.property("slug");
+    expect(link).to.have.property("created_at");
+    expect(link).to.have.property("click_count");
   });
 }

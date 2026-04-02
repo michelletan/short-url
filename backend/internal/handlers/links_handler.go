@@ -10,7 +10,7 @@ import (
 
 type LinkService interface {
 	CreateShortLink(userID int, originalURL string) (*models.Link, error)
-	GetUserLinks(userID int) ([]models.Link, error)
+	GetUserLinks(userID int) ([]*models.Link, error)
 }
 
 type LinkHandler struct {
@@ -44,40 +44,44 @@ func (h *LinkHandler) Create(w http.ResponseWriter, r *http.Request) {
         return
 	}
 
-	res := dtos.CreateLinkResponse{ URL: LinkToShortURLString(h.BaseURL, link) }
+	res := dtos.CreateLinkResponse{ Link: h.LinkToDTO(link) }
 	w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(res)
 }
 
-// GET /api/links
 func (h *LinkHandler) List(w http.ResponseWriter, r *http.Request) {
-	ctxUserID := r.Context().Value("userID")
+    ctxUserID := r.Context().Value("userID")
     userID, ok := ctxUserID.(int)
     if !ok {
         http.Error(w, "Unauthorized", http.StatusUnauthorized)
         return
     }
 
-	links, err := h.LinkService.GetUserLinks(userID)
-	if err != nil {
-		http.Error(w, "An error occurred", http.StatusInternalServerError)
+    links, err := h.LinkService.GetUserLinks(userID)
+    if err != nil {
+        http.Error(w, "An error occurred", http.StatusInternalServerError)
         return
-	}
-	formatted_links := LinksToShortURLStrings(h.BaseURL, links)
-
-	res := dtos.GetLinksResponse{ URLs: formatted_links }
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
-}
-
-func LinkToShortURLString(baseURL string, link *models.Link) string {
-	return baseURL + "/" + link.ShortCode
-}
-
-func LinksToShortURLStrings(baseURL string, links []models.Link) []string {
-    urls := make([]string, len(links))
-    for i, l := range links {
-        urls[i] = LinkToShortURLString(baseURL, &l)
     }
-    return urls
+
+    res := dtos.GetLinksResponse{Links: h.LinksToDTO(links)}
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(res)
+}
+
+func (h *LinkHandler) LinkToDTO(link *models.Link) dtos.LinkDTO {
+    return dtos.LinkDTO{
+        ID:         link.ID,
+        URL:        link.LongURL,
+        Slug:       link.ShortCode,
+		ClickCount: link.ClickCount,
+        CreatedAt:  link.CreatedAt,
+    }
+}
+
+func (h *LinkHandler) LinksToDTO(links []*models.Link) []dtos.LinkDTO {
+    result := make([]dtos.LinkDTO, len(links))
+    for i, l := range links {
+        result[i] = h.LinkToDTO(l)
+    }
+    return result
 }

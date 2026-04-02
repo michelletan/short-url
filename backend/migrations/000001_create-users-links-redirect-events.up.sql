@@ -12,6 +12,7 @@ CREATE TABLE links (
     user_id INTEGER REFERENCES users(id), -- Foreign key to the users table
     long_url TEXT NOT NULL,              -- The original URL (long URL)
     short_code VARCHAR(6) UNIQUE NOT NULL, -- The unique short code (e.g. 'abc123')
+    click_count INTEGER DEFAULT 0,        -- Number of times the short URL has been clicked
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- When the URL was shortened
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- When the shortened URL details were updated
 );

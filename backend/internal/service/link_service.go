@@ -37,7 +37,7 @@ func (s *LinkService) CreateShortLink(userID int, originalURL string) (*models.L
     return link, nil
 }
 
-func (s *LinkService) GetUserLinks(userID int) ([]models.Link, error) {
+func (s *LinkService) GetUserLinks(userID int) ([]*models.Link, error) {
     links, err := s.store.GetByUserId(userID)
     if err != nil {
         log.Printf("Error getting links for user %d: %v", userID, err)

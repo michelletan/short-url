@@ -30,7 +30,7 @@ func (s *RedirectService) GetLinkByShortCode(slug string) (*models.Link, error) 
     return link, nil
 }
 
-func (s *RedirectService) TrackRedirect(urlID int, userIP, userAgent, referrer string) (error) {
+func (s *RedirectService) TrackRedirect(urlID int, userIP, userAgent, referrer string) error {
     r := &models.RedirectEvent{
         URLID:     urlID,
         UserIP:    userIP,
@@ -41,5 +41,12 @@ func (s *RedirectService) TrackRedirect(urlID int, userIP, userAgent, referrer s
         log.Printf("Error tracking redirect for URL ID %d: %v", urlID, err)
         return err
     }
+
+    // increment cached counter on the link
+    if err := s.LinkStore.IncrementClickCount(urlID); err != nil {
+        // non-fatal — redirect event is already recorded
+        log.Printf("Error incrementing click count for URL ID %d: %v", urlID, err)
+    }
+
     return nil
 }

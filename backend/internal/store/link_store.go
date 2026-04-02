@@ -8,9 +8,10 @@ import (
 
 type LinkStore interface {
     Create(link *models.Link) error
-    GetByUserId(userID int) ([]models.Link, error)
+    GetByUserId(userID int) ([]*models.Link, error)
     GetByShortCode(shortCode string) (*models.Link, error)
     ExistsByShortCode(shortCode string) (bool, error)
+    IncrementClickCount(linkID int) error
 }
 
 type LinkStoreImpl struct {
@@ -31,7 +32,7 @@ func (s *LinkStoreImpl) Create(link *models.Link) error {
         Scan(&link.ID, &link.CreatedAt, &link.UpdatedAt)
 }
 
-func (s *LinkStoreImpl) GetByUserId(userID int) ([]models.Link, error) {
+func (s *LinkStoreImpl) GetByUserId(userID int) ([]*models.Link, error) {
     query := `
         SELECT id, user_id, long_url, short_code, created_at, updated_at
         FROM links
@@ -45,9 +46,9 @@ func (s *LinkStoreImpl) GetByUserId(userID int) ([]models.Link, error) {
     }
     defer rows.Close()
 
-    var links []models.Link
+    var links []*models.Link
     for rows.Next() {
-        var l models.Link
+        l := &models.Link{}
         if err := rows.Scan(
             &l.ID,
             &l.UserID,
@@ -98,4 +99,12 @@ func (s *LinkStoreImpl) ExistsByShortCode(shortCode string) (bool, error) {
         return false, err
     }
     return count > 0, nil
+}
+
+func (s *LinkStoreImpl) IncrementClickCount(linkID int) error {
+    _, err := s.DB.Exec(
+        `UPDATE links SET click_count = click_count + 1 WHERE id = $1`,
+        linkID,
+    )
+    return err
 }
