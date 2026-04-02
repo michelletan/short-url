@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
     const cookie = req.headers.get("cookie") ?? "";
 
     await fetch(
-      `${process.env.BACKEND_URL ?? "http://localhost:8080"}/auth/logout`,
+      `${process.env.REDIRECT_BASE_URL ?? "http://localhost:8080"}/auth/logout`,
       {
         method: "POST",
         headers: { Cookie: cookie },

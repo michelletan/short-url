@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { theme } from "@/lib/theme";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,18 +43,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#0e0e0e] flex items-center justify-center px-4">
-      {/* Subtle grid background */}
-      <div
-        className="fixed inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-        }}
-      />
+      <div className={theme.gridBg.className} style={theme.gridBg.style} />
 
       <div className="relative w-full max-w-sm">
-        {/* Brand */}
         <div className="mb-12">
           <span className="font-mono text-xs tracking-[0.3em] text-[#666] uppercase">
             snip
@@ -62,49 +56,30 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-1">
-            <label className="block font-mono text-[11px] tracking-widest text-[#555] uppercase">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-              placeholder="you@example.com"
-              className="w-full bg-[#161616] border border-[#2a2a2a] rounded-sm px-4 py-3 text-sm text-white placeholder-[#444] focus:outline-none focus:border-[#e8ff47] transition-colors duration-200"
-            />
-          </div>
+          <Input
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            placeholder="you@example.com"
+          />
+          <Input
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+            placeholder="••••••••"
+          />
 
-          <div className="space-y-1">
-            <label className="block font-mono text-[11px] tracking-widest text-[#555] uppercase">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              placeholder="••••••••"
-              className="w-full bg-[#161616] border border-[#2a2a2a] rounded-sm px-4 py-3 text-sm text-white placeholder-[#444] focus:outline-none focus:border-[#e8ff47] transition-colors duration-200"
-            />
-          </div>
+          {error && <p className={theme.errorMessage}>{error}</p>}
 
-          {error && (
-            <p className="font-mono text-xs text-red-400 border border-red-400/20 bg-red-400/5 px-3 py-2 rounded-sm">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#e8ff47] text-[#0e0e0e] font-mono text-xs tracking-widest uppercase px-4 py-3.5 rounded-sm hover:bg-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed mt-2"
-          >
+          <Button type="submit" disabled={loading} className="mt-2">
             {loading ? "Signing in..." : "Sign in →"}
-          </button>
+          </Button>
         </form>
 
         <p className="mt-8 font-mono text-xs text-[#444]">

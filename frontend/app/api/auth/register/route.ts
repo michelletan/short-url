@@ -3,18 +3,18 @@ import { backendFetch } from "@/lib/api";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const { username, email, password } = await req.json();
 
-    if (!email || !password) {
+    if (!username || !email || !password) {
       return NextResponse.json(
-        { error: "Email and password are required" },
+        { error: "Username, email, and password are required" },
         { status: 400 }
       );
     }
 
     const data = await backendFetch<{ token?: string; message?: string }>(
       "/auth/register",
-      { method: "POST", body: { email, password } }
+      { method: "POST", body: { username, email, password } }
     );
 
     return NextResponse.json(data, { status: 201 });

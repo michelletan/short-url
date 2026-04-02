@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const res = await fetch(
-      `${process.env.BACKEND_URL ?? "http://localhost:8080"}/auth/login`,
+      `${process.env.REDIRECT_BASE_URL ?? "http://localhost:8080"}/auth/login`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

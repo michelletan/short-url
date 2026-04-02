@@ -3,8 +3,8 @@ import { withAuth, AuthedRequest } from "@/lib/auth";
 import { backendFetch } from "@/lib/api";
 
 type MeResponse = {
-  id: string;
   email: string;
+  username: string;
 };
 
 export const GET = withAuth(async (req: AuthedRequest) => {

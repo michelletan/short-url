@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
+const REDIRECT_BASE_URL = process.env.REDIRECT_BASE_URL ?? "http://localhost:8080";
 
 type FetchOptions = {
   method?: string;
@@ -10,7 +10,7 @@ export async function backendFetch<T>(
   path: string,
   { method = "GET", body, token }: FetchOptions = {}
 ): Promise<T> {
-  const res = await fetch(`${BACKEND_URL}${path}`, {
+  const res = await fetch(`${REDIRECT_BASE_URL}${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",
