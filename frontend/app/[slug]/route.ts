@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { notFound } from "next/navigation";
 
 const REDIRECT_BASE_URL = process.env.REDIRECT_BASE_URL ?? "http://localhost:8080";
 
@@ -8,7 +9,8 @@ export async function GET(
 ) {
   const { slug } = await params;
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
     req.headers.get("x-real-ip") ??
     "";
 
@@ -29,8 +31,9 @@ export async function GET(
   }
 
   if (res.status === 404) {
-    return NextResponse.redirect(new URL("/", req.url));
+    notFound();
   }
 
-  return NextResponse.redirect(new URL("/", req.url));
+  // Fallback for unexpected responses
+  notFound();
 }
