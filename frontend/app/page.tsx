@@ -1,0 +1,10 @@
+import UrlForm from '../components/UrlForm';
+
+export default function Home() {
+  return (
+    <main>
+      <h1>URL Shortener</h1>
+      <UrlForm />
+    </main>
+  );
+}
