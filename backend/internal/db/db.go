@@ -17,7 +17,7 @@ func Connect(dbURL string) (*sql.DB, error) {
     }
 
     if err := db.Ping(); err != nil {
-        return nil, fmt.Errorf("Failed to ping database: %w", err)
+        return nil, fmt.Errorf("Failed to ping database: %w", dbURL, err)
     }
 
     return db, nil

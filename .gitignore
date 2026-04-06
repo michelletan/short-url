@@ -2,5 +2,6 @@
 /*.exe
 *.log
 vendor/
-.env.ci
 .env
+.env.ci
+.env.dev

@@ -1,6 +1,6 @@
-# Load env vars from root .env
-ifneq (,$(wildcard ../.env))
-	include ../.env
+# Load env vars from root .env.dev
+ifneq (,$(wildcard ../.env.dev))
+	include ../.env.dev
 	export
 endif
 
