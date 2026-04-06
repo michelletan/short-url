@@ -62,6 +62,16 @@ cp .env.example .env.dev
 
 4. Run the server:
 
+Start the PostgreSQL container:
+```bash
+make db-up
+```
+
+Run database migrations:
+```bash
+make migrate-up
+```
+
 Locally
 ```bash
 make run
@@ -110,3 +120,20 @@ To test the API endpoints, use [Bruno](https://www.usebruno.com/), an open-sourc
 The Bruno collection is located in the `bruno/` directory. Import the collection into Bruno and run the requests to verify the API functionality.
 
 The collection includes tests for authentication, link creation, listing, and redirection.
+
+## Database
+
+To create a new migration:
+```bash
+make migrate-create name=your_migration_name
+```
+
+To rollback the last migration:
+```bash
+make migrate-down
+```
+
+To stop the database:
+```bash
+make db-down
+```
