@@ -8,7 +8,7 @@ import (
 
 func Connect(dbURL string) (*sql.DB, error) {
     if dbURL == "" {
-        return nil, fmt.Errorf("DB_URL not set")
+        return nil, fmt.Errorf("DATABASE_URL not set")
     }
 
     db, err := sql.Open("postgres", dbURL)

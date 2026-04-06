@@ -91,7 +91,7 @@ export default async function LandingPage() {
         <footer className="border-t border-[#1a1a1a]">
           <div className="max-w-4xl mx-auto px-6 py-6 flex items-center justify-between">
             <span className="font-mono text-[11px] tracking-[0.3em] text-[#333] uppercase">
-              snip
+              Short URL
             </span>
             <span className="font-mono text-[11px] text-[#2a2a2a]">
               Built with Go + Next.js

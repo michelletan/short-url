@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Brand from "@/components/ui/Brand";
 import { theme } from "@/lib/theme";
 
 export default function NotFound() {
@@ -35,12 +36,7 @@ export default function NotFound() {
         </div>
       </div>
 
-      {/* Brand */}
-      <div className="absolute bottom-8">
-        <span className="font-mono text-[11px] tracking-[0.3em] text-[#2a2a2a] uppercase">
-          snip
-        </span>
-      </div>
+      <Brand />
     </div>
   );
 }

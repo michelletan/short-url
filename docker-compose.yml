@@ -2,12 +2,8 @@ services:
   db:
     image: postgres:15
     env_file:
-      - .env
+      - .env.ci
     container_name: shorturl-db
-    environment:
-      POSTGRES_USER: ${DB_USER}  
-      POSTGRES_PASSWORD: ${DB_PASSWORD}  
-      POSTGRES_DB: ${DB_NAME}
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
@@ -16,20 +12,23 @@ services:
   backend:
     build:
       context: ./backend
+    env_file:
+      - .env.ci
     container_name: shorturl-backend
     depends_on:
       - db
-    environment:
-      DATABASE_URL: ${DB_URL}
     ports:
       - "8080:8080"
 
   frontend:
     build: ./frontend
+    env_file:
+      - .env.ci
+    container_name: shorturl-frontend
+    depends_on:
+      - backend
     ports:
       - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=${BACKEND_URL}
     restart: always
 
 volumes:

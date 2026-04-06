@@ -30,10 +30,9 @@
 ## Architecture
 
 ```
-snip/
+short-url/
 ├── backend/          # Go — REST API, auth, URL logic
-├── frontend/         # Next.js — UI, routing, forms
-└── infra/            # Coming soon — Terraform, CI/CD
+└── frontend/         # Next.js — UI, routing, forms
 ```
 
 ### Stack
@@ -41,7 +40,6 @@ snip/
 - **Backend** — Go
 - **Frontend** — Next.js
 - **Analytics** — *(coming soon)*
-- **Infra** — *(coming soon — Terraform + GitLab CI/CD)*
 
 ---
 
@@ -52,7 +50,17 @@ snip/
 - Go 1.22+
 - Node.js 20+
 
-### Run locally
+Make 2 copies of `.env.example` and rename to `.env` and `.env.ci`.
+
+### Run as containers
+
+```bash
+docker-compose up -d --build
+```
+
+App runs on `http://localhost:3000/`.
+
+### Run locally for development
 
 ```bash
 # Backend
@@ -73,8 +81,6 @@ npm run dev
 - [x] User auth
 - [x] Dashboard
 - [ ] Click analytics
-- [ ] Infrastructure as code (Terraform)
-- [ ] CI/CD pipeline (GitLab)
 
 ---
 

@@ -23,7 +23,7 @@ func Load() (*Config, error) {
     baseUrl := os.Getenv("REDIRECT_BASE_URL")
 
     return &Config{
-		DBURL:    os.Getenv("DB_URL"),
+		DBURL:    os.Getenv("DATABASE_URL"),
         JWTSecret: os.Getenv("JWT_SECRET"),
         JWTTTL:    time.Duration(ttlSeconds) * time.Second,
         RedirectBaseURL: baseUrl,

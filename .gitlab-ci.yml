@@ -1,5 +1,6 @@
 stages:
   - test
+  - migrate
   - build
   - deploy
 
@@ -20,6 +21,22 @@ test-frontend:
   image: node:20
   script:
     - cd frontend && npm ci && npm run lint
+
+
+# ── MIGRATE ───────────────────────────────────────────
+
+migrate:
+  stage: migrate
+  image: migrate/migrate:v4.15.2
+  services:
+    - name: postgres:15
+      alias: postgres
+  script:
+    - echo "Waiting for Postgres..."
+    - until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do sleep 1; done
+    - migrate -path ./migrations -database $DB_URL up
+  only:
+    - main
 
 # ── BUILD ───────────────────────────────────────────────
 
