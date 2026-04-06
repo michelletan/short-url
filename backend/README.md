@@ -1,4 +1,4 @@
-# URL Shortener Server
+# URL Shortener Backend
 
 A simple URL shortener backend built with **Go**, **Chi router**, and designed to work with a frontend (e.g., Next.js).  
 Supports user authentication and link management.
@@ -23,7 +23,7 @@ Supports user authentication and link management.
 
 ```bash
 git clone git@gitlab.com:michelletan1/short-url.git
-cd short-url-server
+cd backend
 ````
 
 2. Install dependencies:
@@ -36,10 +36,10 @@ or
 go mod tidy
 ```
 
-3. **Copy the `.env.example` file** to a new `.env` file:
+3. **Copy the `.env.example` file** to a new `.env.dev` file:
 
 ```bash
-cp .env.example .env
+cp .env.example .env.dev
 ```
 
 4. Run the server:
@@ -56,7 +56,7 @@ go run main.go
 
 As a container
 ```bash
-docker-compose up --build
+docker-compose up -d --build
 ```
 
 Server runs on `http://localhost:8080` by default.

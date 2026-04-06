@@ -50,7 +50,7 @@ short-url/
 - Go 1.22+
 - Node.js 20+
 
-Make 2 copies of `.env.example` and rename to `.env` and `.env.ci`.
+Make 2 copies of `.env.example` and rename to `.env.dev` and `.env.ci`.
 
 ### Run as containers
 
