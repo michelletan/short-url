@@ -12,6 +12,16 @@ Supports user authentication and link management.
 - List user links
 - Redirect short URLs
 
+## Project Structure
+
+- `app/`: Next.js App Router directory containing pages, API routes, and layouts
+  - `(auth)/`: Auth-protected routes (dashboard, login, register)
+  - `[slug]/`: Dynamic route for URL redirects
+  - `api/`: Server-side API routes for authentication and link management
+- `components/ui/`: Reusable UI components (buttons, forms, navigation, etc.)
+- `lib/`: Utility libraries for API calls, authentication, and theming
+- `public/`: Static assets (images, icons, etc.)
+
 ## Requirements
 
 - Next.js

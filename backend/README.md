@@ -11,6 +11,24 @@ Supports user authentication and link management.
 - Redirect short URLs (`GET /{slug}`)
 - Modular Go project structure
 
+## Project Structure
+
+- `cmd/server/`: Main application entry point
+- `internal/`: Internal packages (not exported)
+  - `config/`: Application configuration
+  - `db/`: Database connection and error handling
+  - `dtos/`: Data transfer objects for API requests/responses
+  - `handlers/`: HTTP request handlers
+  - `middleware/`: HTTP middleware (e.g., authentication)
+  - `models/`: Data models (User, Link, etc.)
+  - `service/`: Business logic services
+  - `store/`: Data access layer (repositories)
+  - `util/`: Utility functions
+  - `validation/`: Input validation logic
+- `migrations/`: Database migration scripts
+- `bruno/`: API testing collection for Bruno client
+- `bin/`: Compiled binaries (e.g., migrate tool)
+
 ## Requirements
 
 - Go 1.22+
@@ -84,3 +102,11 @@ Requires authentication
 | Method | Path    | Description     |
 | ------ | ------- | --------------- |
 | GET    | /{slug} | Redirect to URL |
+
+## Testing
+
+To test the API endpoints, use [Bruno](https://www.usebruno.com/), an open-source API client.
+
+The Bruno collection is located in the `bruno/` directory. Import the collection into Bruno and run the requests to verify the API functionality.
+
+The collection includes tests for authentication, link creation, listing, and redirection.
