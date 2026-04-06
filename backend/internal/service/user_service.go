@@ -28,6 +28,7 @@ func NewUserService(store UserStore, jwtService *JWTService) *UserService {
 }
 
 func (s *UserService) Register(username, email, password string) (*models.User, error) {
+    log.Printf("Attempting to register user with params: %s, %s", username, email)
     err := validation.ValidateUser(username, email, password)
     if err != nil {
         log.Printf("User form failed validation %s: %v", email, err)

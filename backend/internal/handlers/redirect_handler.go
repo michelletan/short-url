@@ -32,7 +32,8 @@ func (h *RedirectHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.RedirectService.TrackRedirect(link.ID, r.RemoteAddr, r.UserAgent(), r.Referer())
+	ip := r.Header.Get("X-Forwarded-For")
+	h.RedirectService.TrackRedirect(link.ID, ip, r.UserAgent(), r.Referer())
 
 	http.Redirect(w, r, link.LongURL, http.StatusFound)
 }

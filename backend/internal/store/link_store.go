@@ -34,7 +34,7 @@ func (s *LinkStoreImpl) Create(link *models.Link) error {
 
 func (s *LinkStoreImpl) GetByUserId(userID int) ([]*models.Link, error) {
     query := `
-        SELECT id, user_id, long_url, short_code, created_at, updated_at
+        SELECT id, user_id, long_url, short_code, click_count, created_at, updated_at
         FROM links
         WHERE user_id = $1
         ORDER BY created_at DESC
@@ -54,6 +54,7 @@ func (s *LinkStoreImpl) GetByUserId(userID int) ([]*models.Link, error) {
             &l.UserID,
             &l.LongURL,
             &l.ShortCode,
+            &l.ClickCount,
             &l.CreatedAt,
             &l.UpdatedAt,
         ); err != nil {
